@@ -17,21 +17,36 @@ def getArchiveLinks(categroy,start,stop):
 
 def getArchive(url):
     archive = []
-    page = requests.get(url)
-    html = bs4.BeautifulSoup(page.text, "html.parser")
-    title = html.select('div.col-article .art-header .title')[0].string.strip()
+    request = requests.get(url)
+    html = bs4.BeautifulSoup(request.text, "html.parser")
+    titleTag = html.select('div.col-article .art-header .title')
+    title = titleTag[0].string.strip()
     archive.append(title)
-    keywords = html.select('meta[name="keywords"]')
-    archive.append(keywords[0].attrs['content'].strip())
-    description = html.select('meta[property="og:description"]')
-    archive.append(description[0].attrs['content'].strip())
-    print(archive)
-    pages = html.select('div.col-box .pages a')
+    keywordsTag = html.select('meta[name="keywords"]')
+    keywords = keywordsTag[0].attrs['content'].strip()
+    archive.append(keywords)
+    descriptionTag = html.select('meta[property="og:description"]')
+    description = descriptionTag[0].attrs['content'].strip()
+    archive.append(description)
+    pages = html.select('div.col-box .pages a[href*=html]')
     if len(pages):
-        print("分页")
+        cut_Url = url.replace('.html','')
+        print(cut_Url)
+        content = getArchiveContent(url)
+        for pageNum in range(2,len(pages)+1):
+            content += getArchiveContent(cut_Url+"_"+str(pageNum)+".html")
     else:
-        print("单页")
+        content = getArchiveContent(url)
+    archive.append(content)
+    print(archive)
 
+def getArchiveContent(url):
+    response = requests.get(url)
+    html = bs4.BeautifulSoup(response.text,'html.parser')
+    contentTag = html.select('div.con-box .art-body')
+    content = str(contentTag[0]).replace("\n","")
+    content = content.replace('<div class="art-body">','')[:-6]
+    return content
 if __name__ == '__main__':
     linkcount = getArchiveLinks(18,1,2)
     print("总共抓取"+str(len(linkcount))+"个网页。")
