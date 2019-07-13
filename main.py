@@ -31,7 +31,6 @@ def getArchive(url):
     pages = html.select('div.col-box .pages a[href*=html]')
     if len(pages):
         cut_Url = url.replace('.html','')
-        print(cut_Url)
         content = getArchiveContent(url)
         for pageNum in range(2,len(pages)+1):
             content += getArchiveContent(cut_Url+"_"+str(pageNum)+".html")
