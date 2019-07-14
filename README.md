@@ -5,16 +5,16 @@
 
 看得懂就看看不懂就算了吧
 
-###使用的包
+### 使用的包
 
 * request
 * bs4
 
-###pip安装用到的包
+### pip安装用到的包
 
 `pip install requests beautifulsoup4`
 
-###运行
+### 运行
 
 `cmd`到程序根目录下`python main.py`
 
