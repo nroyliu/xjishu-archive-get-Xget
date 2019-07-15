@@ -1,6 +1,5 @@
 #coding=utf-8
 import os
-from urllib.parse import urlparse
 
 import pandas as pd
 import requests
