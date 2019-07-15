@@ -2,6 +2,7 @@
 import os
 from urllib.parse import urlparse
 
+import pandas as pd
 import requests
 import bs4
 
@@ -40,9 +41,9 @@ def getArchive(url):
     else:
         content = getArchiveContent(url)
     getImages(content)
-    content = content.replace("http://img.xjishu.com","")
+    content = content.replace("http://img.xjishu.com","").replace("zl","zlimg")
     archive.append(content)
-    print(archive)
+    return archive
 
 def getArchiveContent(url):
     response = requests.get(url)
@@ -67,11 +68,16 @@ def request_download(url,savePath):
     with open('./images/'+str(savePath), 'wb+') as f:
         f.write(r.content)
 if __name__ == '__main__':
-    linkcount = getArchiveLinks(18, 1, 2)
+    data = pd.DataFrame(columns=['标题','关键词','描述','文章内容'])
+    linkcount = getArchiveLinks(18, 1, 1)
     print("总共抓取" + str(len(linkcount)) + "个网页。")
     i = 1
     for url in linkcount:
         print(i)
-        getArchive(url)
+        Archive = getArchive(url)
+        data.loc[i] = Archive
+        print(Archive)
         i += 1
+    print(data)
+    data.to_excel("get.xlsx",encoding="xlsxwriter",index=False,sheet_name="Sheet1")
 
