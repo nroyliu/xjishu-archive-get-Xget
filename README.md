@@ -9,10 +9,12 @@
 
 * request
 * bs4
+* pandas
+* xlsxwriter
 
 ### pip安装用到的包
 
-`pip install requests beautifulsoup4`
+`pip install requests beautifulsoup4 pandas xlsxwriter`
 
 ### 运行
 
