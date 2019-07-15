@@ -1,4 +1,7 @@
 #coding=utf-8
+import os
+from urllib.parse import urlparse
+
 import requests
 import bs4
 
@@ -36,6 +39,8 @@ def getArchive(url):
             content += getArchiveContent(cut_Url+"_"+str(pageNum)+".html")
     else:
         content = getArchiveContent(url)
+    getImages(content)
+    content = content.replace("http://img.xjishu.com","")
     archive.append(content)
     print(archive)
 
@@ -46,11 +51,27 @@ def getArchiveContent(url):
     content = str(contentTag[0]).replace("\n","")
     content = content.replace('<div class="art-body">','')[:-6]
     return content
+def getImages(content):
+    html = bs4.BeautifulSoup(content,'html.parser')
+    Tag = html.select('img[src^=http]')
+    for image in Tag:
+        src = image.attrs['src']
+        savaPath = src.replace("http://img.xjishu.com/","").replace("zl","zlimg")
+        request_download(src,savaPath)
+def request_download(url,savePath):
+    Path = os.path.dirname(savePath)
+    print(url)
+    r = requests.get(url)
+    if not os.path.exists('./images/'+str(Path)):
+        os.makedirs('./images/'+str(Path))
+    with open('./images/'+str(savePath), 'wb+') as f:
+        f.write(r.content)
 if __name__ == '__main__':
-    linkcount = getArchiveLinks(18,1,2)
-    print("总共抓取"+str(len(linkcount))+"个网页。")
+    linkcount = getArchiveLinks(18, 1, 2)
+    print("总共抓取" + str(len(linkcount)) + "个网页。")
     i = 1
     for url in linkcount:
         print(i)
         getArchive(url)
         i += 1
+
